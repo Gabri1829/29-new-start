@@ -1,0 +1,37 @@
+<!doctype html><html lang="it"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090a0c"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="29">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>29 — New Start</title>
+<style>
+:root{--bg:#090a0c;--card:#14161a;--muted:#8d929b;--text:#f5f7fa;--accent:#c8ff3d;--line:#262a30}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#20251a 0,#090a0c 42%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;min-height:100vh}
+.app{max-width:520px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 18px calc(32px + env(safe-area-inset-bottom))}.brand{text-align:center;margin:12px 0 28px}.brand .n{font-size:58px;font-weight:900;letter-spacing:-5px;line-height:.9}.brand .sub{color:var(--muted);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-top:9px}
+.hero{background:linear-gradient(145deg,#181b20,#101216);border:1px solid var(--line);border-radius:28px;padding:28px 22px;text-align:center;box-shadow:0 18px 50px #0007}.eyebrow{color:var(--accent);font-weight:800;font-size:12px;letter-spacing:1.6px;text-transform:uppercase}.big{font-size:64px;font-weight:900;letter-spacing:-4px;margin:12px 0 2px}.date{color:var(--muted);font-size:15px}.message{font-size:16px;margin:22px 0 0;line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}.icon{font-size:22px}.value{font-size:27px;font-weight:850;margin-top:7px}.label{color:var(--muted);font-size:12px;margin-top:3px}
+.actions{margin-top:14px;display:grid;gap:11px}.btn{border:0;border-radius:18px;padding:17px;font-size:16px;font-weight:800;cursor:pointer}.primary{background:var(--accent);color:#0b0d09}.secondary{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.section{margin-top:24px}.section h2{font-size:18px;margin:0 0 12px}.progress{height:12px;background:#202329;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--accent);width:0%;transition:width .5s}.row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:8px}
+.quote{margin-top:20px;padding:18px 20px;border-left:3px solid var(--accent);background:#111317;border-radius:0 16px 16px 0;line-height:1.5;color:#d9dde3}.hidden{display:none}.small{color:var(--muted);font-size:12px;line-height:1.5;text-align:center}#urgeTimer{font-size:42px;font-weight:900;text-align:center;margin:12px 0}
+</style></head><body><div class="app">
+<div class="brand"><div class="n">29</div><div class="sub">New Start</div></div>
+<section class="hero" id="countdown"><div class="eyebrow">Il tuo giorno 0</div><div class="big" id="days">—</div><div class="date">giorni al 29 ottobre 2026</div><div class="message">L'ultima sigaretta è la sera del <b>28 ottobre</b>.<br>Il 29 ottobre inizia il tuo nuovo capitolo.</div></section>
+<section class="hero hidden" id="started"><div class="eyebrow">Sei libero</div><div class="big" id="cleanDays">1</div><div class="date">giorni senza fumare</div><div class="message">Un altro giorno conquistato. Continua così. 🔥</div></section>
+<div class="grid"><div class="stat"><div class="icon">🚬</div><div class="value" id="cigs">0</div><div class="label">sigarette non fumate</div></div><div class="stat"><div class="icon">💰</div><div class="value" id="money">0,00 €</div><div class="label">soldi risparmiati</div></div></div>
+<div class="section"><h2>🎯 Obiettivo: 2.500 €</h2><div class="progress"><div class="bar" id="bar"></div></div><div class="row"><span id="savedLabel">0,00 €</span><span>2.500 €</span></div></div>
+<div class="actions"><button class="btn primary" onclick="urge()">🔥 Ho voglia di fumare</button><button class="btn secondary" onclick="mark()">✅ Segna oggi come conquistato</button></div>
+<div id="urgeBox" class="section hidden"><div class="stat"><div class="small">Aspetta 5 minuti. La voglia passa anche senza seguirla.</div><div id="urgeTimer">05:00</div><button class="btn secondary" style="width:100%" onclick="closeUrge()">Sto meglio</button></div></div>
+<div class="quote">❤️ <b>Per Melissa.</b><br>Il 29 ottobre non è soltanto il giorno in cui smetti. È il giorno del suo primo compleanno e l'inizio di qualcosa di nuovo per te.</div>
+<p class="small" style="margin-top:18px">1,2 pacchetti/giorno · 5,80 € a pacchetto · dati salvati sul dispositivo.</p>
+</div>
+<script>
+const target=new Date("2026-10-29T00:00:00"), price=5.80, packs=1.2, daily=price*packs;
+let manual=Number(localStorage.getItem("manualDays")||0);
+function euro(n){return n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2})+" €"}
+function refresh(){const now=new Date(),diff=target-now,days=Math.max(0,Math.ceil(diff/86400000));document.getElementById("days").textContent=days;
+if(now>=target){document.getElementById("countdown").classList.add("hidden");document.getElementById("started").classList.remove("hidden");let clean=Math.max(1,Math.floor((now-target)/86400000)+1,manual),money=clean*daily,cigs=clean*packs*20;document.getElementById("cleanDays").textContent=clean;document.getElementById("money").textContent=euro(money);document.getElementById("cigs").textContent=Math.round(cigs);document.getElementById("savedLabel").textContent=euro(money);document.getElementById("bar").style.width=Math.min(100,money/2500*100)+"%"}}
+function mark(){manual++;localStorage.setItem("manualDays",manual);refresh()}
+let interval;function urge(){document.getElementById("urgeBox").classList.remove("hidden");let s=300;clearInterval(interval);const el=document.getElementById("urgeTimer");interval=setInterval(()=>{s--;el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");if(s<=0){clearInterval(interval);el.textContent="Ce l'hai fatta! 🔥"}},1000)}
+function closeUrge(){clearInterval(interval);document.getElementById("urgeBox").classList.add("hidden")}
+refresh();setInterval(refresh,60000);
+</script></body></html>
